@@ -1,7 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
 import os
-import sqlite3
 
 url = "https://en.wikipedia.org/wiki/Khabib_Nurmagomedov"
 html_content=requests.get(url).text
