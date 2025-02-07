@@ -72,5 +72,5 @@ for fighter_line in main_table:
           
 
 fighters_data.close()
-cur.close()
+cur.close() 
 
