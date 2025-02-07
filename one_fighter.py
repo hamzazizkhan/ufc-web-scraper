@@ -1,28 +1,11 @@
 import requests
 from bs4 import BeautifulSoup
 import os
+from main_table import tables
 
 url = "https://en.wikipedia.org/wiki/Khabib_Nurmagomedov"
-html_content=requests.get(url).text
-#print(html_content)
-soup = BeautifulSoup(html_content, "html.parser")
+fighter_name, prof_rec_table, main_rec_table = tables(url)
 
-fighter_name = soup.find('h1').get_text()
-heading_two = soup.find_all('h2')
-
-prof_rec_table = None
-for heading in heading_two:
-    # Mixed martial arts record section
-    if 'id' in heading.attrs:
-        if heading['id']=='Mixed_martial_arts_record':
-            print('found Mixed martial arts record section')
-            print(heading)
-
-            # Professional record breakdown table
-            prof_rec_table = heading.string.next_element.next_element
-            print('found Professional record breakdown table')
-            print(prof_rec_table)
-            break
 
 prof_rec_data = {}
 prof_rec_list = prof_rec_table.tbody.get_text().split()
