@@ -4,8 +4,8 @@ from bs4 import BeautifulSoup
 import os
 
 # returns prof rec table and main table
-def tables(link):
-    html_content=requests.get(link).text
+def tables(html_content):
+    # html_content=requests.get(link).text
     #print(html_content)
     soup = BeautifulSoup(html_content, "html.parser")
 
@@ -65,59 +65,4 @@ def links_qu(main_rec_table):
         #print('=================')
     return(qu)
 
-url = "https://en.wikipedia.org/wiki/Khabib_Nurmagomedov"
 
-
-fighter_name, prof_rec_table, main_rec_table, html_content = tables(url)
-
-print('\n')
-print('=================')
-
-if(os.path.exists('main_table.txt')): os.remove('main_table.txt')
-file = open('main_table.txt', 'a')
-file.write(fighter_name.split()[0] + ' ' + fighter_name.split()[1]+ '// ')
-
-rows = main_rec_table.find_all('tr')
-qu = []
-i=0
-rowspan = []
-inserts=0
-for row in rows:
-    if i ==0:
-        i=1
-        continue
-    #print(row)
-    td = row.find_all('td')
-    text = [td_tag.text.strip() for td_tag in td]
-
-    if len(rowspan)!=0:
-        for ele in rowspan:
-            text_insert = ele[0]
-            index_insert = ele[1]
-            
-            text.insert(index_insert, text_insert)
-        if inserts==1:
-            rowspan=[]
-            inserts=0
-        else:
-            inserts-=1
-
-    else:
-        #rowspan = [(int(td_tag['rowspan'])-1, td_tag.text.strip(), i) for i, td_tag in enumerate(td) if 'rowspan' in td_tag.attrs]
-        for i, td_tag in enumerate(td):
-            if 'rowspan' in td_tag.attrs:
-                rowspan.append((td_tag.text.strip(), i))
-                inserts = int(td_tag['rowspan'])-1
-
-    #print(rowspan)
-
-    #print('=================')
-    
-
-    for word in text:
-        file.write(word + '// ')
-
-    #print('=================')
-
-
-file.close()
