@@ -4,19 +4,12 @@ conn = sqlite3.connect('fighters.sqlite')
 cur = conn.cursor()
 
 cur.execute('''
-DROP TABLE IF EXISTS profesional_record_data
-''')
-cur.execute('''
-DROP TABLE IF EXISTS MMA_record
-''')
-
-cur.execute('''
-CREATE TABLE profesional_record_data (firstName TEXT, lastName TEXT, matches INT, wins INT, losses INT, 
+CREATE TABLE IF NOT EXISTS profesional_record_data (firstName TEXT, lastName TEXT, matches INT, wins INT, losses INT, 
             knockoutWins INT, knockoutLosses INT, submissionWins INT, submissionLosses INT, 
             decisionWins INT, decisionLosses INT)
 ''')
 cur.execute('''
-CREATE TABLE MMA_record (firstName TEXT, lastName TEXT, result TEXT, record NUMERIC, opponent TEXT, method TEXT, event TEXT,
+CREATE TABLE IF NOT EXISTS MMA_record (firstName TEXT, lastName TEXT, result TEXT, record NUMERIC, opponent TEXT, method TEXT, event TEXT,
             date DATE, round INT, time NUMERIC, location TEXT, notes TEXT)
 ''')
 

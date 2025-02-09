@@ -4,4 +4,4 @@ prof_record.py
 prof_record_breakdown_table.txt
 ruff.py
 fighters.txt
-
+__pycache__/

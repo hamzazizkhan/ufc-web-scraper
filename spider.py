@@ -75,7 +75,9 @@ else:
     ''', (first,last))
 
 qu_items=0
-while qu_items<6:
+amount = int(input('how many qu items do you want to visit?'))
+
+while qu_items<amount:
     cur.execute('''
     SELECT firstName, lastName, href FROM qu
     ''')
@@ -84,14 +86,14 @@ while qu_items<6:
     first_fighter_first_name = first_fighter[0][0]
     first_fighter_second_name = first_fighter[0][1]
     first_fighter_url = first_fighter[0][2]
-    print(first_fighter_first_name,first_fighter_second_name)
+    #print(first_fighter_first_name,first_fighter_second_name)
     cur.execute('''
     SELECT links FROM qu
     ''')
     links = cur.fetchone()
     links = links[0].split()  
     
-    print(f'looping through links obtained from {first_fighter_first_name, first_fighter_second_name}')  
+    #print(f'looping through links obtained from {first_fighter_first_name, first_fighter_second_name}')  
 
     rowid = None
     for link in links:
@@ -106,7 +108,7 @@ while qu_items<6:
 
         html = requests.get(link).text
         fighter_name, prof_rec_table, main_rec_table, html_content = tables(html)
-        print(f'currently GETTING ALL LINKS FROM {fighter_name}\n')
+        #print(f'currently GETTING ALL LINKS FROM {fighter_name}\n')
         qu = links_qu(main_rec_table)
 
         qu_str = ''
@@ -127,13 +129,13 @@ while qu_items<6:
             ''',(first_name, last_name, qu_str, link, first_fighter_first_name, first_fighter_second_name, rowid))
         
         conn.commit()
-        print(f'adding to end of qu {first_name, last_name} at row id: {rowid}\n')
+        #print(f'adding to end of qu {first_name, last_name} at row id: {rowid}\n')
         #print(f'adding to visited links {first_name, last_name} \n')
     
     conn.commit()
-    print(f'all links for {first_fighter_first_name} gone through')
-    print(f'deleting {first_fighter_first_name} from qu')
-    print(f'adding {first_fighter_first_name} to visited links')
+    #print(f'all links for {first_fighter_first_name} gone through')
+    #print(f'deleting {first_fighter_first_name} from qu')
+    #print(f'adding {first_fighter_first_name} to visited links')
     cur.execute('''
     INSERT INTO visited_links (firstName, lastName, href, html) VALUES (?, ?, ?, ?) 
         ''',(first_fighter_first_name, first_fighter_second_name, first_fighter_url, 
@@ -150,14 +152,14 @@ while qu_items<6:
 
     cur.execute('SELECT * FROM qu')
     qu_end_iter =cur.fetchall()
-    print(f'first two values in qu at end of iteration {qu_end_iter[0], qu_end_iter[1]} \n')
+    #print(f'first two values in qu at end of iteration {qu_end_iter[0], qu_end_iter[1]} \n')
 
     cur.execute('SELECT firstName, lastName FROM visited_links')
     visi_end_iter = cur.fetchall()
-    print(f'last  value of visited set at end of iteration {visi_end_iter[-1]} \n')
+    #print(f'last  value of visited set at end of iteration {visi_end_iter[-1]} \n')
     
     qu_items+=1
 
 
-validate()
+#validate()
 cur.close()
