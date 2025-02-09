@@ -26,17 +26,6 @@ def validate():
 conn = sqlite3.connect('fighters.sqlite')
 cur = conn.cursor()
 
-#for now start fresh each time: add khabibs link and opps 
-
-cur.execute('''
-DROP TABLE IF EXISTS visited_links
-''')
-cur.execute('''
-DROP TABLE IF EXISTS qu
-''')
-
-
-
 cur.execute(''' 
 CREATE TABLE IF NOT EXISTS visited_links (firstName STR,lastName STR, href STR, html STR)
 ''')
@@ -54,7 +43,9 @@ links = cur.fetchone()
 
 if links is None:  # crawl has not started
     url = "https://en.wikipedia.org/wiki/Khabib_Nurmagomedov"
-    fighter_name, prof_rec_table, main_rec_table, html_content = tables(url)
+    html = requests.get(url).text
+
+    fighter_name, prof_rec_table, main_rec_table, html_content = tables(html)
 
     qu = links_qu(main_rec_table)
 
@@ -71,11 +62,20 @@ if links is None:  # crawl has not started
 
     
     conn.commit()
+else:
+    cur.execute('''
+    SELECT firstName, lastName FROM qu 
+    ''')
+    names = cur.fetchone()
+    first = names[0]
+    last = names[1]
 
-
+    cur.execute('''
+    DELETE FROM qu WHERE (fromFirstName, fromLastName) = (?,?)
+    ''', (first,last))
 
 qu_items=0
-while qu_items<2:
+while qu_items<6:
     cur.execute('''
     SELECT firstName, lastName, href FROM qu
     ''')
@@ -104,7 +104,8 @@ while qu_items<2:
         # print(all_hrefs)
         if (link,) in all_hrefs: continue
 
-        fighter_name, prof_rec_table, main_rec_table, html_content = tables(link)
+        html = requests.get(link).text
+        fighter_name, prof_rec_table, main_rec_table, html_content = tables(html)
         print(f'currently GETTING ALL LINKS FROM {fighter_name}\n')
         qu = links_qu(main_rec_table)
 
@@ -135,7 +136,8 @@ while qu_items<2:
     print(f'adding {first_fighter_first_name} to visited links')
     cur.execute('''
     INSERT INTO visited_links (firstName, lastName, href, html) VALUES (?, ?, ?, ?) 
-        ''',(first_fighter_first_name, first_fighter_second_name, url, requests.get(url).text))
+        ''',(first_fighter_first_name, first_fighter_second_name, first_fighter_url, 
+             requests.get(first_fighter_url).text))
 
     cur.execute('''
         SELECT rowid FROM qu ORDER BY rowid 
