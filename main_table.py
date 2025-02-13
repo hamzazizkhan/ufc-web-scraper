@@ -39,7 +39,7 @@ def tables(html_content):
                         break
                 #print('=================')
                 break
-    return(fighter_name, prof_rec_table, main_rec_table, html_content)
+    return(fighter_name, prof_rec_table, main_rec_table)
 
 def links_qu(main_rec_table):
     rows = main_rec_table.find_all('tr')
